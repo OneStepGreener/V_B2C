@@ -24,7 +24,6 @@ const DriverLoginScreen = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const validateAndProceed = async () => {
-    console.log('🚀 ===== LOGIN SCREEN BUTTON CLICKED =====');
     console.log('🚀 validateAndProceed function started!');
     console.log('📝 Vehicle Number:', vehicleNumber);
     console.log('📝 Driving License:', drivingLicense);
@@ -65,7 +64,7 @@ const DriverLoginScreen = ({ navigation }) => {
       // Add timeout to prevent hanging
       const authPromise = AuthController.login(vehicleNumber, drivingLicense);
       const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Authentication timeout after 15 seconds')), 15000);
+        setTimeout(() => reject(new Error('Authentication timeout after 30 seconds')), 30000);
       });
       
       const result = await Promise.race([authPromise, timeoutPromise]);

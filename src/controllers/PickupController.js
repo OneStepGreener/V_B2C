@@ -137,33 +137,42 @@ class PickupController {
   }
 
   /**
-   * Start pickup timing for current stop (V2 - Normalized System)
+   * Start pickup timing for current stop (V1 - Original System)
    * @returns {Promise<Object>} Start pickup response
    */
   static async startCurrentPickup() {
     try {
-      const assignmentSession = await AuthController.getAssignmentSession();
-      if (assignmentSession && assignmentSession.isV2) {
-        console.log('🚀 Starting pickup timing for V2 system');
-        
-        // Start pickup timing
-        const startResult = await ApiService.startPickup(
-          assignmentSession.assignmentId,
-          assignmentSession.currentSequence
-        );
-        
-        console.log('✅ Pickup timing started:', startResult);
-        
+      console.log('🚀 Starting pickup timing for V1 system');
+      
+      // Get the driver session data from V1 authentication
+      const sessionData = await AuthController.getSessionData();
+      if (!sessionData || !sessionData.driver) {
         return {
-          success: true,
-          message: 'Pickup started successfully',
-          pickupStartedAt: startResult.pickup_started_at
+          success: false,
+          error: 'No active session found. Please login again.'
         };
       }
+
+      // Use assignment_id from the session data
+      const assignmentId = sessionData.driver.assignment_id;
+      if (!assignmentId) {
+        return {
+          success: false,
+          error: 'No assignment ID found in session data'
+        };
+      }
+
+      console.log('📋 Using assignment ID:', assignmentId);
+      
+      // Start trip timing using V1 API
+      const startResult = await ApiService.startTrip(assignmentId);
+      
+      console.log('✅ Trip timing started:', startResult);
       
       return {
-        success: false,
-        error: 'V2 session not found'
+        success: true,
+        message: 'Trip started successfully',
+        tripStartedAt: startResult.trip_started_at
       };
     } catch (error) {
       console.error('Error starting pickup:', error);

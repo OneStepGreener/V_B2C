@@ -46,9 +46,9 @@ class ApiService {
         throw new Error(`Network connectivity test failed: ${testError.message}`);
       }
 
-      // AbortController for timeout
+      // AbortController for timeout - increased to 30 seconds to match V2
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 12000);
+      const timeoutId = setTimeout(() => controller.abort(), 30000);
 
       const response = await fetch(`${BASE_URL}/driver/authenticate`, {
         method: 'POST',

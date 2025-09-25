@@ -49,6 +49,13 @@ class AuthController {
       // Store driver session data
       await this.storeDriverSession(driverData);
 
+      // Start trip timing (if assignment_id is available)
+      if (driverData.assignment_id) {
+        console.log('🚀 AuthController: Starting trip timing...');
+        await ApiService.startTrip(driverData.assignment_id);
+        console.log('✅ AuthController: Trip timing started successfully');
+      }
+
       return {
         success: true,
         driver: driverData,
